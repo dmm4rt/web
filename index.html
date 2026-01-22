@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказ услуг</title>
+    <!-- Подключаем Telegram Web Apps API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #fff);
+            color: var(--tg-theme-text-color, #000);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-urgent {
+            background-color: #ff3b30; /* Красный */
+            color: white;
+        }
+
+        .btn-consult {
+            background-color: #007aff; /* Синий */
+            color: white;
+        }
+
+        /* Анимация ожидания */
+        .loader {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--tg-theme-button-color, #3498db);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            display: none;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: var(--tg-theme-hint-color, #888);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-screen">
+        <h1>Выберите услугу</h1>
+        <button class="btn btn-urgent" onclick="sendOrder('urgent')">🔥 Срочный заказ</button>
+        <button class="btn btn-consult" onclick="sendOrder('consult')">💬 Консультация</button>
+    </div>
+
+    <div id="loading-screen" style="display: none;">
+        <div class="loader" style="display: block;"></div>
+        <p class="status-text" style="display: block;">Ждет подтверждения...</p>
+    </div>
+
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Раскрыть на весь экран
+
+        function sendOrder(type) {
+            // 1. Скрываем кнопки, показываем анимацию "Ждет подтверждения"
+            document.getElementById('main-screen').style.display = 'none';
+            document.getElementById('loading-screen').style.display = 'block';
+
+            // 2. Формируем данные для отправки боту
+            const data = JSON.stringify({
+                action: type,
+                text: type === 'urgent' ? 'Срочный заказ' : 'Консультация'
+            });
+
+            // 3. Отправляем данные боту
+            // Важно: sendData закрывает приложение и передает данные в чат боту
+            tg.sendData(data);
+        }
+    </script>
+</body>
+</html>
